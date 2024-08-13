@@ -44,4 +44,13 @@ export class Terrpixel {
 			}
 		}
 	}
+	circle(x0, y0, r, color) {
+		for (let y = y0 - r; y <= y0 + r; y++) {
+			for (let x = x0 - r; x <= x0 + r; x++) {
+				if (Math.hypot(x - x0, y - y0) <= r) {
+					this.setPixel(x, y, color);
+				}
+			}
+		}
+	}
 }

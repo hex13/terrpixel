@@ -48,4 +48,31 @@ describe('Terrpixel', () => {
 			...X, ..._, ...X, ...X,
 		]));
 	});
+
+	it('', () => {
+		const width = 20;
+		const height = 20;
+		const terrpixel = new Terrpixel({ width, height });
+		const r = 5;
+		const x0 = 8;
+		const y0 = 10;
+		terrpixel.circle(x0, y0, r, X);
+		let count = 0;
+		let falseCount = 0;
+		for (let y = 0; y < height; y++) {
+			for (let x = 0; x < width; x++) {
+				count++;
+				const alpha = terrpixel.data[(y * width + x) * ELS_PER_PIXEL + 3];
+				const inCircle = Math.hypot(x - x0, y - y0) <= r;
+				if (inCircle) {
+					if (alpha != X[3]) falseCount++;
+					assert.strictEqual(alpha, X[3]);
+				} else {
+					if (alpha != 0) falseCount++;
+					assert.strictEqual(alpha, 0);
+				}
+			}
+		}
+		console.log(`false: ${falseCount} / ${count}`)
+	});
 });
