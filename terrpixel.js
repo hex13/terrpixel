@@ -9,6 +9,7 @@ export class Terrpixel {
 		this.height = height;
 	}
 	getIndex(x, y) {
+		if (x < 0 || y < 0 || x >= this.width || y >= this.height) return new Error(`invalid coords: ${x}, ${y}`);
 		return (y * this.width + x) * ELS_PER_PIXEL;
 	}
 	getPixel(x, y, data = this.data) {
