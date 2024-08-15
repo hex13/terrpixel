@@ -1,5 +1,6 @@
 {
   "name": "terrpixel",
+  "type": "module",
   "version": "0.0.2",
   "description": "",
   "main": "index.js",
@@ -7,5 +8,8 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Łukasz Lityński",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "mocha": "^10.7.3"
+  }
 }
