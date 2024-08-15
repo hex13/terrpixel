@@ -1,5 +1,5 @@
 import * as assert from 'assert';
-import { Terrpixel, ELS_PER_PIXEL } from './terrpixel';
+import { Terrpixel, ELS_PER_PIXEL } from './terrpixel.js';
 
 const X = [200, 210, 220, 255];
 const _ = [0, 0, 0, 0];
@@ -49,7 +49,7 @@ describe('Terrpixel', () => {
 		]));
 	});
 
-	it('', () => {
+	it('circle()', () => {
 		const width = 20;
 		const height = 20;
 		const terrpixel = new Terrpixel({ width, height });
@@ -75,4 +75,138 @@ describe('Terrpixel', () => {
 		}
 		console.log(`false: ${falseCount} / ${count}`)
 	});
+
+
+	it('neighborY() - flat', () => {
+		const width = 3;
+		const height = 5;
+		const terrpixel = new Terrpixel({ width, height });
+		terrpixel.data = new Uint8Array([
+			..._, ..._, ..._,
+			..._, ..._, ..._,
+			..._, ...X, ...X,
+			..._, ..._, ..._,
+			..._, ..._, ..._,
+		]);
+		assert.deepStrictEqual(terrpixel.neighborY(1, 2), 2);
+		assert.deepStrictEqual(terrpixel.neighborY(2, 2, -1), 2);
+	});
+
+	it('neighborY() - right rising', () => {
+		const width = 3;
+		const height = 5;
+		const terrpixel = new Terrpixel({ width, height });
+		terrpixel.data = new Uint8Array([
+			..._, ..._, ..._,
+			..._, ..._, ...X,
+			..._, ...X, ..._,
+			...X, ...X, ..._,
+			..._, ...X, ..._,
+		]);
+		assert.deepStrictEqual(terrpixel.neighborY(0, 3), 2);
+		assert.deepStrictEqual(terrpixel.neighborY(1, 2), 1);
+	});
+
+	it('neighborY() - left rising', () => {
+		const width = 3;
+		const height = 5;
+		const terrpixel = new Terrpixel({ width, height });
+		terrpixel.data = new Uint8Array([
+			..._, ..._, ..._,
+			...X, ..._, ..._,
+			..._, ...X, ..._,
+			..._, ...X, ...X,
+			..._, ...X, ..._,
+		]);
+		assert.deepStrictEqual(terrpixel.neighborY(2, 3, -1), 2);
+		assert.deepStrictEqual(terrpixel.neighborY(1, 2, -1), 1);
+	});
+
+	it('neighborY() - right rising - steep', () => {
+		const width = 3;
+		const height = 5;
+		const terrpixel = new Terrpixel({ width, height });
+		terrpixel.data = new Uint8Array([
+			..._, ..._, ..._,
+			..._, ..._, ...X,
+			..._, ...X, ..._,
+			..._, ...X, ..._,
+			...X, ...X, ..._,
+		]);
+		assert.deepStrictEqual(terrpixel.neighborY(0, 4), 2);
+	});
+
+	it('neighborY() - left rising - steep', () => {
+		const width = 3;
+		const height = 5;
+		const terrpixel = new Terrpixel({ width, height });
+		terrpixel.data = new Uint8Array([
+			..._, ..._, ..._,
+			...X, ..._, ..._,
+			..._, ...X, ..._,
+			..._, ...X, ..._,
+			..._, ...X, ...X,
+		]);
+		assert.deepStrictEqual(terrpixel.neighborY(2, 4, -1), 2);
+	});
+
+
+	it('neighborY() - right falling', () => {
+		const width = 3;
+		const height = 5;
+		const terrpixel = new Terrpixel({ width, height });
+		terrpixel.data = new Uint8Array([
+			..._, ..._, ..._,
+			..._, ..._, ..._,
+			..._, ...X, ..._,
+			..._, ..._, ...X,
+			..._, ..._, ..._,
+		]);
+		assert.deepStrictEqual(terrpixel.neighborY(1, 2), 3);
+	});
+
+	it('neighborY() - left falling', () => {
+		const width = 3;
+		const height = 5;
+		const terrpixel = new Terrpixel({ width, height });
+		terrpixel.data = new Uint8Array([
+			..._, ..._, ..._,
+			..._, ..._, ..._,
+			..._, ...X, ..._,
+			...X, ..._, ..._,
+			..._, ..._, ..._,
+		]);
+		assert.deepStrictEqual(terrpixel.neighborY(1, 2, -1), 3);
+	});
+
+
+	it('neighborY() - right falling - steep', () => {
+		const width = 3;
+		const height = 5;
+		const terrpixel = new Terrpixel({ width, height });
+		terrpixel.data = new Uint8Array([
+			..._, ..._, ..._,
+			..._, ...X, ..._,
+			..._, ...X, ..._,
+			..._, ..._, ...X,
+			..._, ..._, ..._,
+		]);
+		assert.deepStrictEqual(terrpixel.neighborY(1, 1), 3);
+	});
+
+	it('neighborY() - left falling - steep', () => {
+		const width = 3;
+		const height = 5;
+		const terrpixel = new Terrpixel({ width, height });
+		terrpixel.data = new Uint8Array([
+			..._, ..._, ..._,
+			..._, ...X, ..._,
+			..._, ...X, ..._,
+			...X, ..._, ..._,
+			..._, ..._, ..._,
+		]);
+		assert.deepStrictEqual(terrpixel.neighborY(1, 1, -1), 3);
+	});
+
+
 });

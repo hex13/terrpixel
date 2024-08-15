@@ -54,4 +54,17 @@ export class Terrpixel {
 			}
 		}
 	}
+	neighborY(x, y, dir = 1) {
+		if (this.getAlpha(x + dir, y - 1) > 0) {
+			let y1;
+			for (y1 = y - 1; this.getAlpha(x + dir, y1) > 0; y1--) /* noop */;
+			return y1 + 1;
+		}
+		if (this.getAlpha(x + dir, y) > 0) return y;
+		if (this.getAlpha(x + dir, y + 1) > 0) return y + 1;
+
+		let y1;
+		for (y1 = y + 1; this.getAlpha(x + dir, y1) == 0; y1++) /* noop */;
+		return y1;
+	}
 }
