@@ -32,7 +32,7 @@ describe('Terrpixel', () => {
 	});
 
 
-	it('', () => {
+	it('fall (whole map)', () => {
 		const terrpixel = new Terrpixel({ width, height });
 		terrpixel.data = new Uint8Array([
 			...X, ..._, ..._, ..._,
@@ -48,6 +48,24 @@ describe('Terrpixel', () => {
 			...X, ..._, ...X, ...X,
 		]));
 	});
+
+	it('fall (fragment)', () => {
+		const terrpixel = new Terrpixel({ width, height });
+		terrpixel.data = new Uint8Array([
+			...X, ..._, ..._, ..._,
+			...X, ...X, ..._, ...X,
+			..._, ...X, ...X, ..._,
+			...X, ..._, ..._, ..._,
+		]);
+		terrpixel.fall(1, 3);
+		assert.deepStrictEqual(terrpixel.data, new Uint8Array([
+			...X, ..._, ..._, ..._,
+			...X, ..._, ..._, ...X,
+			..._, ...X, ..._, ..._,
+			...X, ...X, ...X, ..._,
+		]));
+	});
+
 
 	it('circle()', () => {
 		const width = 20;

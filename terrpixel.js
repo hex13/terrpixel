@@ -36,8 +36,8 @@ export class Terrpixel {
 		this.data[fromIdx + 2] = 0;
 		this.data[fromIdx + 3] = 0;
 	}
-	fall() {
-		for (let x = 0; x < this.width; x++) {
+	fall(x0 = 0, x1 = this.width) {
+		for (let x = x0; x < x1; x++) {
 			for (let y = this.height - 2; y >= 0; y--) {
 				if (this.getAlpha(x, y) > 0 && this.getAlpha(x, y + 1) == 0) {
 					this.movePixel(x, y, x, y + 1)
