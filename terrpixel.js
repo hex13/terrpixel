@@ -7,6 +7,7 @@ export class Terrpixel {
 		this.data = new Uint8Array(width * height * ELS_PER_PIXEL);
 		this.width = width;
 		this.height = height;
+		this.dirtyColumns = new Uint8Array(width).fill(1);
 	}
 	getIndex(x, y) {
 		if (x < 0 || y < 0 || x >= this.width || y >= this.height) return new Error(`invalid coords: ${x}, ${y}`);
@@ -21,6 +22,7 @@ export class Terrpixel {
 		return data[idx + 3];
 	}
 	setPixel(x, y, value) {
+		this.dirtyColumns[x] = 1;
 		const idx = this.getIndex(x, y);
 		this.data[idx] = value[0];
 		this.data[idx + 1] = value[1];
@@ -38,11 +40,15 @@ export class Terrpixel {
 	}
 	fall(x0 = 0, x1 = this.width) {
 		for (let x = x0; x < x1; x++) {
+			if (!this.dirtyColumns[x]) continue;
+			let dirty = 0;
 			for (let y = this.height - 2; y >= 0; y--) {
 				if (this.getAlpha(x, y) > 0 && this.getAlpha(x, y + 1) == 0) {
 					this.movePixel(x, y, x, y + 1)
+					dirty = 1;
 				}
 			}
+			this.dirtyColumns[x] = dirty;
 		}
 	}
 	circle(x0, y0, r, color) {

@@ -18,7 +18,7 @@ describe('Terrpixel', () => {
 		});
 	});
 
-	it('', () => {
+	it('setPixel()', () => {
 		const terrpixel = new Terrpixel({ width, height });
 		terrpixel.setPixel(1, 2, X);
 		assert.deepStrictEqual(terrpixel.data, new Uint8Array([
@@ -29,6 +29,16 @@ describe('Terrpixel', () => {
 		]));
 		assert.deepStrictEqual(terrpixel.getPixel(1, 2), new Uint8Array(X));
 		assert.deepStrictEqual(terrpixel.getPixel(2, 2), new Uint8Array(_));
+	});
+
+	it('setPixel() - dirtyColumns', () => {
+		const terrpixel = new Terrpixel({ width: 10, height: 5 });
+		terrpixel.dirtyColumns = new Uint8Array(10);
+		terrpixel.setPixel(3, 2, X);
+		assert.deepStrictEqual(terrpixel.dirtyColumns, new Uint8Array([
+			0, 0, 0, 1, 0,
+			0, 0, 0, 0, 0,
+		]));
 	});
 
 
@@ -75,6 +85,7 @@ describe('Terrpixel', () => {
 		const x0 = 8;
 		const y0 = 10;
 		terrpixel.circle(x0, y0, r, X);
+
 		let count = 0;
 		let falseCount = 0;
 		for (let y = 0; y < height; y++) {
@@ -94,6 +105,23 @@ describe('Terrpixel', () => {
 		console.log(`false: ${falseCount} / ${count}`)
 	});
 
+
+	it('circle() - dirtyColumns', () => {
+		const width = 20;
+		const height = 20;
+		const terrpixel = new Terrpixel({ width, height });
+		const r = 5;
+		const x0 = 8;
+		const y0 = 10;
+		terrpixel.dirtyColumns = new Uint8Array(20);
+		terrpixel.circle(x0, y0, r, X);
+		assert.deepStrictEqual(terrpixel.dirtyColumns, new Uint8Array([
+			0, 0, 0, 1, 1,
+			1, 1, 1, 1, 1,
+			1, 1, 1, 1, 0,
+			0, 0, 0, 0, 0,
+		]));
+	});
 
 	it('neighborY() - flat', () => {
 		const width = 3;
@@ -224,6 +252,45 @@ describe('Terrpixel', () => {
 			..._, ..._, ..._,
 		]);
 		assert.deepStrictEqual(terrpixel.neighborY(1, 1, -1), 3);
+	});
+
+	it('dirtyColumns - should not move columns that are not dirty', () => {
+		const width = 4;
+		const height = 5;
+		const map = [
+			..._, ..._, ..._, ..._,
+			..._, ...X, ..._, ..._,
+			..._, ...X, ..._, ..._,
+			...X, ..._, ..._, ...X,
+			..._, ..._, ..._, ...X,
+		];
+		const terrpixel = new Terrpixel({ width, height });
+		terrpixel.data = new Uint8Array(map);
+		terrpixel.dirtyColumns = new Uint8Array(4);
+		terrpixel.fall();
+		assert.deepStrictEqual(terrpixel.data, new Uint8Array(map));
+
+	});
+
+
+	it('dirtyColumns - cleaning dirty marks', () => {
+		const width = 4;
+		const height = 5;
+		const terrpixel = new Terrpixel({ width, height });
+		terrpixel.data = new Uint8Array([
+			..._, ..._, ..._, ..._,
+			..._, ...X, ..._, ..._,
+			..._, ...X, ..._, ..._,
+			...X, ..._, ..._, ...X,
+			..._, ..._, ..._, ...X,
+		]);
+		assert.deepStrictEqual(terrpixel.dirtyColumns, new Uint8Array([1, 1, 1, 1]));
+		terrpixel.fall();
+		assert.deepStrictEqual(terrpixel.dirtyColumns, new Uint8Array([1, 1, 0, 0]));
+		terrpixel.fall();
+		assert.deepStrictEqual(terrpixel.dirtyColumns, new Uint8Array([0, 1, 0, 0]));
+		terrpixel.fall();
+		assert.deepStrictEqual(terrpixel.dirtyColumns, new Uint8Array([0, 0, 0, 0]));
 	});
 
 
