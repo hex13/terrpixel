@@ -18,7 +18,7 @@ ctx.fillStyle = 'rgb(60, 200, 60)';
 ctx.fillRect(10, 20, 350, 150);
 ctx.fillStyle = 'rgb(100, 250, 0)';
 
-
+let pointer = {x: 0, y: 0};
 
 const terrpixel = new Terrpixel({ width, height });
 let imageData = ctx.getImageData(0, 0, width, height);
@@ -30,38 +30,52 @@ for (let i = 0; i < 20; i++) {
 }
 
 requestAnimationFrame = (a) => setTimeout(a, 100);
+
 function render() {
 	ctx.putImageData(imageData, 0, 0)
+	ctx.fillStyle = 'red';
+
+	ctx.fillRect(pointer.x, pointer.y, 2, 2);
+
+
+	ctx.beginPath();
+
+	const w = 50;
+	for (let i = 0, x = pointer.x, y = pointer.y; i < w; i++) {
+		y = terrpixel.neighborY(x, y);
+		x += 1;
+		if (i == 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+	}
+	for (let i = 0, x = pointer.x, y = pointer.y; i < w; i++) {
+		y = terrpixel.neighborY(x, y, -1);
+		x -= 1;
+		if (i == 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+	}
+
+	ctx.stroke();
+
+
 	for (let i = 0; i < 5; i++)
 		terrpixel.fall();
 	requestAnimationFrame(render);
 }
 
-setInterval(() => {
-	const x = ~~(Math.random() * width);
-	const y = 200 + ~~(Math.random() * (height - 200));
-
-	// terrpixel.circle(x, y, 30, [255, 0, 0, 0]);
-	// ctx.save();
-	// ctx.beginPath();
-	// ctx.arc(x, 200 + y, 30, 0, Math.PI * 2);
-	// ctx.closePath();
-	// ctx.clip();
-	// ctx.fillStyle = 'rgb(0 0 0 / 1.0)';
-	// ctx.clearRect(0, 0, canvas.width, canvas.height);
-	// ctx.restore();
-	// imageData = ctx.getImageData(0, 0, width, height);
-	// terrpixel.data = imageData.data;
-
-	console.log("clear")
-	}, 2000);
 render();
+
+const computeXY = e => {
+	const bounds = e.target.getBoundingClientRect();
+	const x = ~~(e.clientX - bounds.x);
+	const y = ~~(e.clientY - bounds.y);
+	return {x, y};
+}
 
 canvas.addEventListener('pointerdown', e => {
 	const shouldCreate = document.getElementById('create').checked;
-	const bounds = e.target.getBoundingClientRect();
-	const x = e.clientX - bounds.x;
-	const y = e.clientY - bounds.y;
+	const {x, y} = computeXY(e);
 	terrpixel.circle(~~x, ~~y, 30, shouldCreate? [200, 100, 50, 255] : [0, 0, 0, 0]);
-})
+});
 
+
+canvas.addEventListener('pointermove', e => {
+	pointer = computeXY(e);
+});
