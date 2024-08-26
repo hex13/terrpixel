@@ -38,6 +38,7 @@ export class Terrpixel {
 		this.data[fromIdx + 2] = 0;
 		this.data[fromIdx + 3] = 0;
 	}
+	//@info it iterates over all pixels from dirty regions and it moves them down, if there's nothing under them. It updates dirty regions.
 	fall(x0 = 0, x1 = this.width) {
 		for (let x = x0; x < x1; x++) {
 			if (!this.dirtyColumns[x]) continue;
@@ -51,6 +52,7 @@ export class Terrpixel {
 			this.dirtyColumns[x] = dirty;
 		}
 	}
+	//@info it creates circle at (x0, y0) position and radius = r. It also set regions dirty.
 	circle(x0, y0, r, color) {
 		for (let y = y0 - r; y <= y0 + r; y++) {
 			for (let x = x0 - r; x <= x0 + r; x++) {
@@ -60,6 +62,7 @@ export class Terrpixel {
 			}
 		}
 	}
+	//@info for pixel at (x, y) it returns y of its neighbor terrain-wise. Pass dir = 1 for right neighbor and dir = -1 for left neighbor.
 	neighborY(x, y, dir = 1) {
 		if (this.getAlpha(x + dir, y - 1) > 0) {
 			let y1;
